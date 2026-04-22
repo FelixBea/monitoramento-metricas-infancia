@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.get('/', (req, res) => {
+app.get('/', (req: any, res: any) => {
     res.send('Monitoramento de Métricas da Infancia API');
 });
 
