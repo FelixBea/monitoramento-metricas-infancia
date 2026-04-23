@@ -1,0 +1,38 @@
+services:
+  # ========================================
+  # Production Service
+  # ========================================
+  api-prod:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+      target: production
+    container_name: api-prod
+    ports:
+      - '5000:5000'
+    environment:
+      NODE_ENV: production
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: '${PROD_MEMORY_LIMIT:-2G}'
+          cpus: '${PROD_CPU_LIMIT:-1.0}'
+        reservations:
+          memory: '${PROD_MEMORY_RESERVATION:-512M}'
+          cpus: '${PROD_CPU_RESERVATION:-0.25}'
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks:
+      - api-network
+
+# ========================================
+# Network Configuration
+# ========================================
+networks:
+  api-network:
+    name: api-network
+    driver: bridge
