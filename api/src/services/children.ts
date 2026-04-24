@@ -1,8 +1,12 @@
 import childrenData from '../data/seed.json';
+import { getPagination, Pagination } from '../utils/pagination';
 
 const childrenService = {
-    findAll() {
-        return childrenData;
+    findAll(pagination: Pagination) {
+        return {
+            data: getPagination(childrenData, pagination),
+            totalResults: childrenData.length,
+        };
     },
     findById(id: string) {
         return childrenData.find((item) => item.id === id);
