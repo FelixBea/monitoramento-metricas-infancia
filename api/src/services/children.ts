@@ -19,13 +19,29 @@ const filterBy = {
     hasAlerts: hasAlertsFilter,
 };
 
+const filterChildren = (data: any[], filters: ChildrenFilterValues[]) => {
+    return data.filter((child) => {
+        let passedAllFilters = true;
+        filters.forEach((filter: ChildrenFilterValues) => {
+            const key = Object.keys(filter)[0] as ChildrenFilterKeys;
+            if (!filterBy[key as ChildrenFilterKeys](child, key, filter)) {
+                passedAllFilters = false;
+            }
+        });
+        return passedAllFilters;
+    });
+}
+
 const childrenService = {
-    findAll(pagination: Pagination, filters: ChildrenFilterValues) {
-        const filteredData = Object.keys(filters).length
-            ? childrenData.filter((child) => {
-                  return Object.keys(filters).some((key: any) => filterBy[key as ChildrenFilterKeys](child, key, filters));
-              })
-            : childrenData;
+    findAll(pagination: Pagination, filters: ChildrenFilterValues[]) {
+        let filteredData = childrenData;
+
+        console.log("filters: ", filters);
+
+        if (filters.length) {
+            filteredData = filterChildren(childrenData, filters);
+        }
+
         return {
             data: getPagination(filteredData, pagination),
             totalResults: filteredData.length,

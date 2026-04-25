@@ -8,15 +8,16 @@ const children = Router();
 
 children.get('/', (req: Request, res: Response) => {
     try {
-        const pagination = { 
-            page: req.query.page ? Number(req.query.page) : null, 
-            size: req.query.size ? Number(req.query.size) : null 
+        const pagination = {
+            page: req.query.page ? Number(req.query.page) : null,
+            size: req.query.size ? Number(req.query.size) : null,
         };
-        const filters: ChildrenFilterValues = {
-            ...(req.query?.bairro ? { bairro: req.query.bairro as string } : {}),
-            ...(req.query?.hasAlerts ? { hasAlerts: true } : {}),
-            ...(req.query?.reviewed ? { revisado: req.query.reviewed !== 'false'} : {}),
-        };
+        const filters: Partial<ChildrenFilterValues>[] = [];
+        
+        req.query?.bairro && filters.push({ bairro: req.query.bairro as string });
+        req.query?.hasAlerts && filters.push({ hasAlerts: true });
+        req.query?.reviewed && filters.push({ revisado: req.query.reviewed !== 'false' });
+
         const data = childrenService.findAll(pagination, filters);
         res.status(200).json(data);
     } catch (error) {
