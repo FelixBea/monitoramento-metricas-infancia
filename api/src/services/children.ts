@@ -1,8 +1,7 @@
-import childrenData from '../data/seed.json';
 import { getPagination, Pagination } from '../utils/pagination';
 import { ChildrenFilterValues, FilterFunction, ChildrenFilterKeys } from '../types/children';
 import { NotFoundError } from '../middleware/errorHandler';
-import { writeFileSync } from 'fs';
+import childrenRepository from '../repositories/children';
 
 const alerts = ['saude', 'educacao', 'assistencia_social'];
 
@@ -34,11 +33,12 @@ const filterChildren = (data: any[], filters: ChildrenFilterValues[]) => {
 };
 
 const childrenService = {
-    findAll(pagination: Pagination, filters: ChildrenFilterValues[]) {
-        let filteredData = childrenData;
+    async findAll(pagination: Pagination, filters: ChildrenFilterValues[]) {
+        let filteredData: any = await childrenRepository.findAll();
+        console.log("filteredData: ", filteredData);
 
         if (filters.length) {
-            filteredData = filterChildren(childrenData, filters);
+            filteredData = filterChildren(filteredData, filters);
         }
 
         return {
@@ -46,25 +46,19 @@ const childrenService = {
             totalResults: filteredData.length,
         };
     },
-    findById(id: string) {
-        const data = childrenData.find((item) => item.id === id);
+    async findById(id: string) {
+        const data = await childrenRepository.findById(id);
         if (!data) {
             throw new NotFoundError('Record not found');
         }
 
         return data;
     },
-    reviewById(id: string, user: string) {
-        const child = this.findById(id);
-        const index = childrenData.indexOf(child);
-        console.log("index: ", index);
-        child.revisado = true;
-        child.revisado_em = new Date().toISOString();
-        child.revisado_por = user;
-        console.log('present status of array: ', childrenData);
-        const patchedChildrenData = [...childrenData];
-        patchedChildrenData[index] = child;
-        writeFileSync('../data/seed.json', JSON.stringify(patchedChildrenData, null, 2), 'utf8');
+    async reviewById(id: string, user: string) {
+        const payload = { revisado: true, revisado_em: new Date().toISOString(), revisado_por: user };
+        console.log("payload: ", payload);
+        await childrenRepository.reviewById(id, payload);
+        console.log("ended review");
     },
 };
 
