@@ -2,11 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import { apiV1Router } from './routes';
 import dotenv from 'dotenv';
+import { connectDatabase } from './config/mongodb';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+
+//Database
+connectDatabase();
 
 // Middleware
 app.use(cors());

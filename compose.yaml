@@ -17,6 +17,7 @@ services:
       #  (unless we had a .env file config step before that command because .env is not versioned
       #  or a deploy pipeline w/ secret injection) 
       JWT_SECRET: '63f4945d921d599f27ae4fdf5bada3f1'
+      DB_LOCAL_URI: 'mongodb://mongodb:27017/test'
     restart: unless-stopped
     deploy:
       resources:
@@ -32,7 +33,7 @@ services:
     tmpfs:
       - /tmp
     networks:
-      - api-network
+      - express-mongo
 
   # ========================================
   # Production Next.js App Service
@@ -48,11 +49,25 @@ services:
     depends_on:
       - api-prod
     restart: unless-stopped
+  
+  # ========================================
+  # Production MongoDB Service
+  # ========================================
+  mongodb:
+    restart: always
+    image: mongodb/mongodb-community-server:8.0-ubuntu2204-slim
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - express-mongo
+    ports:
+      - '27017:27017'
+
+volumes:
+  mongo_data:
 
 # ========================================
 # Network Configuration
 # ========================================
 networks:
-  api-network:
-    name: api-network
-    driver: bridge
+  express-mongo:
