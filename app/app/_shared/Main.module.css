@@ -1,0 +1,11 @@
+.main {
+    padding: var(--spacing4);
+    width: 100%;
+    max-width: 1440px;
+    height: 100vh;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
