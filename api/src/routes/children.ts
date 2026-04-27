@@ -1,48 +1,34 @@
-import { NextFunction, Request, Response, Router } from 'express';
+import { NextFunction, Response, Router } from 'express';
+import { Request } from 'express-jwt';
 import childrenService from '../services/children';
 import { ChildrenFilterValues } from '../types/children';
-
-class NotFoundError extends Error {}
+import { validateAuthToken } from '../middleware/auth';
 
 const children = Router();
 
 children.get('/', (req: Request, res: Response) => {
-    try {
-        const pagination = {
-            page: req.query.page ? Number(req.query.page) : null,
-            size: req.query.size ? Number(req.query.size) : null,
-        };
-        const filters: Partial<ChildrenFilterValues>[] = [];
-        
-        req.query?.bairro && filters.push({ bairro: req.query.bairro as string });
-        req.query?.hasAlerts && filters.push({ hasAlerts: true });
-        req.query?.reviewed && filters.push({ revisado: req.query.reviewed !== 'false' });
+    const pagination = {
+        page: req.query.page ? Number(req.query.page) : null,
+        size: req.query.size ? Number(req.query.size) : null,
+    };
+    const filters: Partial<ChildrenFilterValues>[] = [];
 
-        const data = childrenService.findAll(pagination, filters);
-        res.status(200).json(data);
-    } catch (error) {
-        console.log(error);
-        res.status(500).json('Oops! Internal error');
-    }
+    req.query?.bairro && filters.push({ bairro: req.query.bairro as string });
+    req.query?.hasAlerts && filters.push({ hasAlerts: true });
+    req.query?.reviewed && filters.push({ revisado: req.query.reviewed !== 'false' });
+
+    const data = childrenService.findAll(pagination, filters);
+    res.status(200).json(data);
 });
 
 children.get('/:id', (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const id = req.params?.id;
-        const data = childrenService.findById(id as string);
+    const data = childrenService.findById(req.params?.id as string);
+    res.status(200).json(data);
+});
 
-        if (id && !data) {
-            throw new NotFoundError('Record not found');
-        }
-        res.status(200).json(data);
-    } catch (error: any) {
-        const message = error?.message || 'Oops! Internal error';
-        if (error instanceof NotFoundError) {
-            res.status(404).json(message);
-            return next();
-        }
-        res.status(500).json(message);
-    }
+children.patch('/:id/review', validateAuthToken, (req: Request, res: Response, next: NextFunction) => {
+    childrenService.reviewById(req.params?.id as string, req.auth?.preferred_username);
+    res.status(204);
 });
 
 export default children;
