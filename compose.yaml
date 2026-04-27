@@ -1,6 +1,6 @@
 services:
   # ========================================
-  # Production Service
+  # Production API Service
   # ========================================
   api-prod:
     build:
@@ -33,6 +33,21 @@ services:
       - /tmp
     networks:
       - api-network
+
+  # ========================================
+  # Production Next.js App Service
+  # ========================================
+  app-nextjs-prod-standalone:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+      target: runner
+    container_name: app-nextjs-prod
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api-prod
+    restart: unless-stopped
 
 # ========================================
 # Network Configuration
