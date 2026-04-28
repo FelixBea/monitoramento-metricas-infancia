@@ -49,6 +49,9 @@ services:
     depends_on:
       - api-prod
     restart: unless-stopped
+    environment:
+      - API_BASE_URL=http://localhost:5000/api/v1
+      - SESSION_SECRET='kLhe+30zILTXmdDGQxL6bBfUrufpQ0QM2S62tlJXxlo='
   
   # ========================================
   # Production MongoDB Service
