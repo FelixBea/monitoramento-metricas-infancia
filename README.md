@@ -3,6 +3,8 @@
 ## Descrição
 Projeto fullstack baseado em dados fictícios de crianças acompanhadas por progrmaas sociais do município.
 
+Este projeto foi feito integralmente sem apoio de modelos de linguagem (IA), seja para geração de código como para pesquisa.
+
 ## Instruções para execução
 Executar na pasta raiz do projeto: 
 ```docker compose up```
@@ -46,6 +48,7 @@ Observações:
 ### Pendências do projeto e possíveis melhorias
 O que faria diferente com mais tempo:
 
-- 
+- Resolução de bugs
 - Criar um service no arquivo compose.yaml para rodar containeres de todos os services em ambiente de desenvolvimento com docker compose api-dev
-- 
+- Melhorar a separação de responsabilidades no service children
+- Validar params do request nas rotas da API
