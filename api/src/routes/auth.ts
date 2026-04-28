@@ -6,6 +6,7 @@ import { User } from '../types/users';
 const auth = Router();
 
 auth.post('/token', (req: Request, res: Response) => {
+    console.log("auth req: ", req.body);
     if (!req.body || !req.body.user || !req.body.password) return res.sendStatus(400);
     const userCredentials: User = { name: req.body.user, password: req.body.password };
 

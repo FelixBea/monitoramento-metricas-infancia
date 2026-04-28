@@ -1,8 +1,9 @@
 import styles from "./LoginForm.module.css";
+import { signin } from '../actions/auth';
 
 export const LoginForm = () => {
   return (
-    <form className={styles.login}>
+    <form className={styles.login} action={signin}>
       <fieldset className={styles.fieldset}>
         <div className={styles.field}>
           <label>
@@ -21,7 +22,7 @@ export const LoginForm = () => {
           </label>
         </div>
       </fieldset>
-      <button>Entrar</button>
+      <button type="submit">Entrar</button>
     </form>
   );
 };

@@ -20,11 +20,3 @@
     gap: var(--spacing5);
     padding: var(--spacing5);
 }
-
-.field {
-    /* max-height: var(--spacing5); */
-}
-
-.field > div {
-
-}
