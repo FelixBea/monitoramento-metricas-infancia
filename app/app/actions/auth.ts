@@ -1,8 +1,9 @@
-import { redirect } from "next/navigation";
-import axios from 'axios';
+"use server";
 
-export async function signin(formData: FormData) {
-  "use server";
+import { redirect } from "next/navigation";
+import axios from "axios";
+
+export async function signin(_previousState: any, formData: FormData) {
   const body = {
     user: formData.get("user") as string,
     password: formData.get("password") as string,
@@ -14,16 +15,13 @@ export async function signin(formData: FormData) {
   const options = {
     method: "POST",
     body: JSON.stringify(body),
-    headers: { "Content-Type": "application/json", 'Accept': "application/json" },
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
   };
 
-  console.log("req: ", options);
   try {
     const response = await axios.post(authUrl, body);
-    console.log("response: ", response);
-    redirect("/");
+    return response.data;
   } catch (error) {
     console.error(error);
-    redirect("/login");
   }
 }

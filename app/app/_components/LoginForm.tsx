@@ -1,9 +1,16 @@
+"use client";
+
 import styles from "./LoginForm.module.css";
 import { signin } from '../actions/auth';
+import { useActionState } from 'react';
 
 export const LoginForm = () => {
+  const [state, signinFormAction, isPending] = useActionState(signin, null);
+
+  console.log(state);
+
   return (
-    <form className={styles.login} action={signin}>
+    <form className={styles.login} action={signinFormAction}>
       <fieldset className={styles.fieldset}>
         <div className={styles.field}>
           <label>
